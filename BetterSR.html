@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterSR — 更好的录制屏幕</title>
+    <style>
+        :root {
+            --pink: #E06C9F;
+            --pink-light: #F8C3CD;
+            --bg: #FFF8FA;
+            --card: #FFFFFF;
+            --text: #2D2233;
+            --muted: #7A6A7A;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+        header {
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+        }
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 600px; height: 420px;
+            background: radial-gradient(circle at center, var(--pink-light) 0%, transparent 70%);
+            opacity: 0.45;
+            z-index: -1;
+        }
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: var(--pink);
+            margin-bottom: 12px;
+        }
+        .tagline {
+            font-size: 22px;
+            color: var(--muted);
+            margin-bottom: 36px;
+        }
+        .cta {
+            display: inline-block;
+            background: var(--pink);
+            color: #fff;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(224, 108, 159, 0.35);
+        }
+
+        .section { padding: 70px 0; }
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px; left: 0;
+            width: 48px; height: 4px;
+            background: var(--pink);
+            border-radius: 2px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+        }
+        .feature-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
+        }
+        .feature-card:hover { transform: translateY(-4px); }
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--pink);
+        }
+        .feature-card p { color: var(--muted); }
+
+        .showcase {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+        .showcase img {
+            flex: 1 1 420px;
+            max-width: 100%;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            opacity: 0.9;
+        }
+        .showcase-text { flex: 1 1 420px; }
+        .showcase-text h2 { font-size: 40px; margin-bottom: 20px; }
+        .showcase-text p { font-size: 17px; color: var(--muted); margin-bottom: 16px; }
+
+        .hotkeys {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 14px 0;
+            text-align: left;
+            border-bottom: 1px solid #F0E6EB;
+        }
+        th { color: var(--pink); font-weight: 700; }
+        code {
+            background: #FCEFF3;
+            color: var(--pink);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: "SF Mono", Consolas, monospace;
+            font-size: 13px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        footer a { color: var(--pink); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 48px; }
+            .showcase { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>BetterSR</h1>
+        <p class="tagline">更好的录制屏幕 · 更轻 · 更好看 · 更听话</p>
+        <a class="cta" href="publish/BetterSR.exe" download>下载 BetterSR.exe</a>
+    </div>
+</header>
+
+<section class="section">
+    <div class="container">
+        <div class="showcase">
+            <img src="Assets/Background.png" alt="BetterSR Preview">
+            <div class="showcase-text">
+                <h2>录屏，本该如此温柔</h2>
+                <p>BetterSR 为 Windows 打造，拒绝臃肿与工业感。浅粉配色搭配半透明背景，让每一次录制都像在创作。</p>
+                <p>支持全屏、区域、窗口三种录制模式；系统音频与麦克风独立开关；20+ 全局快捷键覆盖录制全流程。</p>
+                <p>开机自启、托盘常驻、每日一言——打开它，就像遇见一个老朋友的问候。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="background:#fff;">
+    <div class="container">
+        <h2 class="section-title">核心特性</h2>
+        <div class="features">
+            <div class="feature-card">
+                <h3>三种录制模式</h3>
+                <p>全屏、区域、窗口，一键切换。区域录制支持可视化拖拽选区。</p>
+            </div>
+            <div class="feature-card">
+                <h3>灵活音频控制</h3>
+                <p>系统音频与麦克风可独立开关，实时混音输出到 MP4。</p>
+            </div>
+            <div class="feature-card">
+                <h3>20+ 全局快捷键</h3>
+                <p>录制、暂停、截图、切换音频，全程无需离开当前工作区。</p>
+            </div>
+            <div class="feature-card">
+                <h3>浅色 / 深色主题</h3>
+                <p>一键切换日夜间模式，保护眼睛，也保护心情。</p>
+            </div>
+            <div class="feature-card">
+                <h3>开机自启 + 托盘</h3>
+                <p>常驻系统托盘，随时开始录制；支持开机自动启动。</p>
+            </div>
+            <div class="feature-card">
+                <h3>每日一言</h3>
+                <p>每次启动从一言 API 随机获取一句话，给创作一点灵感。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">快捷键一览</h2>
+        <div class="hotkeys">
+            <table>
+                <tr><th>功能</th><th>快捷键</th></tr>
+                <tr><td>全屏录制</td><td><code>Ctrl + Alt + F9</code></td></tr>
+                <tr><td>暂停 / 继续</td><td><code>Ctrl + Alt + F10</code></td></tr>
+                <tr><td>区域录制</td><td><code>Ctrl + Alt + R</code></td></tr>
+                <tr><td>窗口录制</td><td><code>Ctrl + Alt + W</code></td></tr>
+                <tr><td>全屏截图</td><td><code>Ctrl + Alt + S</code></td></tr>
+                <tr><td>区域截图</td><td><code>Ctrl + Alt + Shift + S</code></td></tr>
+                <tr><td>显示主界面</td><td><code>Ctrl + Alt + B</code></td></tr>
+                <tr><td>切换麦克风</td><td><code>Ctrl + Alt + M</code></td></tr>
+                <tr><td>切换系统音频</td><td><code>Ctrl + Alt + N</code></td></tr>
+                <tr><td>停止并保存</td><td><code>Ctrl + Alt + End</code></td></tr>
+                <tr><td>丢弃录制</td><td><code>Ctrl + Alt + Esc</code></td></tr>
+                <tr><td>切换主题</td><td><code>Ctrl + T</code></td></tr>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="background:#fff;">
+    <div class="container" style="text-align:center;">
+        <h2 class="section-title" style="display:inline-block;">开始使用</h2>
+        <p style="max-width:600px;margin:0 auto 30px;color:var(--muted);font-size:17px;">
+            下载单文件 exe，双击运行。首次启动会自动准备 FFmpeg（约 100MB）。录制文件默认保存到桌面 BetterSR 文件夹。
+        </p>
+        <a class="cta" href="publish/BetterSR.exe" download>立即下载 BetterSR</a>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>BetterSR © 2026 kscm · 许可证 <a href="https://license.kscm.top/available.md" target="_blank">Available License</a></p>
+    </div>
+</footer>
+
+</body>
+</html>

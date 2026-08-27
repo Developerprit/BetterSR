@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="WindowBg" Color="#FF2D2233"/>
+    <SolidColorBrush x:Key="WindowFg" Color="#FFF0F0F0"/>
+    <SolidColorBrush x:Key="Accent" Color="#FFF8C3CD"/>
+    <SolidColorBrush x:Key="AccentLight" Color="#FF4A3A55"/>
+    <SolidColorBrush x:Key="AccentHover" Color="#FFFAD0DA"/>
+    <SolidColorBrush x:Key="CardBg" Color="#D0222230"/>
+    <SolidColorBrush x:Key="CardBorder" Color="#60F8C3CD"/>
+    <SolidColorBrush x:Key="ButtonFg" Color="#FF2D2233"/>
+    <SolidColorBrush x:Key="SayingFg" Color="#FFF8C3CD"/>
+    <SolidColorBrush x:Key="StatusFg" Color="#FFD0B0C0"/>
+    <SolidColorBrush x:Key="ToggleOff" Color="#FF555555"/>
+    <SolidColorBrush x:Key="RecordingRed" Color="#FFFF6B6B"/>
+</ResourceDictionary>
