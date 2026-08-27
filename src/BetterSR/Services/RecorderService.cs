@@ -19,6 +19,7 @@ public class RecorderService
     private CancellationTokenSource? _cts;
     private Task? _recordTask;
     private string? _currentOutputPath;
+    private int _markerCount;
 
     public RecordingState State { get; private set; } = RecordingState.Idle;
     public TimeSpan CurrentDuration { get; private set; }
@@ -102,6 +103,36 @@ public class RecorderService
         return SaveScreenshot(bmp, path);
     }
 
+    /// <summary>
+    /// 在当前录制中追加一个章节标记；返回标记序号（未录制时返回 -1）。
+    /// 同时把 "序号<TAB>录制时长<TAB>本地时间" 追加写入与输出同名的 .markers.txt。
+    /// </summary>
+    public int AddMarker()
+    {
+        if (State != RecordingState.Recording) return -1;
+
+        _markerCount++;
+        if (!string.IsNullOrEmpty(_currentOutputPath))
+        {
+            try
+            {
+                var markerFile = _currentOutputPath + ".markers.txt";
+                var line = $"{_markerCount}\t{CurrentDuration:hh\\:mm\\:ss}\t{DateTime.Now:yyyy-MM-dd HH:mm:ss}\n";
+                File.AppendAllText(markerFile, line);
+            }
+            catch
+            {
+                // 标记落盘失败不应中断录制
+            }
+        }
+        return _markerCount;
+    }
+
+    /// <summary>
+    /// 返回当前全屏截图位图（供快捷键复制到剪贴板等场景使用）。调用方负责 Dispose。
+    /// </summary>
+    public System.Drawing.Bitmap? CaptureScreenBitmap() => _capture.CaptureScreen();
+
     private bool SaveScreenshot(Bitmap? bmp, string? path)
     {
         if (bmp == null) return false;
@@ -117,6 +148,7 @@ public class RecorderService
     {
         if (State == RecordingState.Recording || State == RecordingState.Paused) return;
 
+        _markerCount = 0;
         Directory.CreateDirectory(_config.Settings.OutputDirectory);
         _currentOutputPath = Path.Combine(
             _config.Settings.OutputDirectory,

@@ -25,17 +25,25 @@
 | 功能 / Function | 快捷键 / Hotkey |
 |---|---|
 | 全屏录制 / Fullscreen | `Ctrl + Alt + F9` |
-| 暂停/继续 / Pause & Resume | `Ctrl + Alt + F10` |
 | 区域录制 / Region | `Ctrl + Alt + R` |
 | 窗口录制 / Window | `Ctrl + Alt + W` |
-| 全屏截图 / Screenshot | `Ctrl + Alt + S` |
-| 区域截图 / Screenshot Region | `Ctrl + Alt + Shift + S` |
-| 显示主界面 / Show Window | `Ctrl + Alt + B` |
-| 切换麦克风 / Toggle Mic | `Ctrl + Alt + M` |
-| 切换系统音频 / Toggle System Audio | `Ctrl + Alt + N` |
+| 暂停/继续 / Pause & Resume | `Ctrl + Alt + F10` |
 | 停止并保存 / Stop & Save | `Ctrl + Alt + End` |
 | 丢弃录制 / Discard | `Ctrl + Alt + Esc` |
+| 添加章节标记 / Add Marker | `Ctrl + Alt + K` |
+| 全屏截图 / Screenshot | `Ctrl + Alt + S` |
+| 区域截图 / Screenshot Region | `Ctrl + Alt + Shift + S` |
+| 窗口截图 / Screenshot Window | `Ctrl + Alt + Shift + W` |
+| 活动窗口截图 / Screenshot Active Window | `Ctrl + Alt + Shift + A` |
+| 截图到剪贴板 / Screenshot to Clipboard | `Ctrl + Alt + Shift + C` |
+| 打开输出文件夹 / Open Output Folder | `Ctrl + Alt + O` |
+| 打开上次录制 / Open Last Recording | `Ctrl + Alt + Shift + O` |
+| 复制上次路径 / Copy Last Path | `Ctrl + Alt + C` |
+| 切换麦克风 / Toggle Mic | `Ctrl + Alt + M` |
+| 切换系统音频 / Toggle System Audio | `Ctrl + Alt + N` |
+| 显示主界面 / Show Window | `Ctrl + Alt + B` |
 | 切换主题 / Toggle Theme | `Ctrl + T` |
+| 打开设置 / Open Settings | `Ctrl + ,` |
 
 ---
 

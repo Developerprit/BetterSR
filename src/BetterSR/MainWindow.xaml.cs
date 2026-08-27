@@ -3,12 +3,16 @@ using BetterSR.Services;
 using BetterSR.Views;
 using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace BetterSR;
@@ -26,6 +30,9 @@ public partial class MainWindow : Window
     private System.Windows.Forms.NotifyIcon? _trayIcon;
     private DispatcherTimer? _durationTimer;
     private RecordingState _lastRecorderState = RecordingState.Idle;
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
 
     public MainWindow()
     {
@@ -113,6 +120,15 @@ public partial class MainWindow : Window
             new HotkeyDefinition { Id = "ToggleSysAudio", Name = "切换系统音频", Modifiers = ModifierKeys.Control | ModifierKeys.Alt, Key = Key.N, IsGlobal = true },
             new HotkeyDefinition { Id = "StopSave", Name = "停止并保存", Modifiers = ModifierKeys.Control | ModifierKeys.Alt, Key = Key.End, IsGlobal = true },
             new HotkeyDefinition { Id = "Discard", Name = "丢弃录制", Modifiers = ModifierKeys.Control | ModifierKeys.Alt, Key = Key.Escape, IsGlobal = true },
+            new HotkeyDefinition { Id = "Marker", Name = "添加标记", Modifiers = ModifierKeys.Control | ModifierKeys.Alt, Key = Key.K, IsGlobal = true },
+            new HotkeyDefinition { Id = "OpenFolder", Name = "打开输出文件夹", Modifiers = ModifierKeys.Control | ModifierKeys.Alt, Key = Key.O, IsGlobal = true },
+            new HotkeyDefinition { Id = "CopyPath", Name = "复制上次路径", Modifiers = ModifierKeys.Control | ModifierKeys.Alt, Key = Key.C, IsGlobal = true },
+            new HotkeyDefinition { Id = "ScreenshotWindow", Name = "窗口截图", Modifiers = ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift, Key = Key.W, IsGlobal = true },
+            new HotkeyDefinition { Id = "ScreenshotActive", Name = "活动窗口截图", Modifiers = ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift, Key = Key.A, IsGlobal = true },
+            new HotkeyDefinition { Id = "ScreenshotClipboard", Name = "截图到剪贴板", Modifiers = ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift, Key = Key.C, IsGlobal = true },
+            new HotkeyDefinition { Id = "OpenLastFile", Name = "打开上次录制", Modifiers = ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift, Key = Key.O, IsGlobal = true },
+            new HotkeyDefinition { Id = "Theme", Name = "切换主题", Modifiers = ModifierKeys.Control, Key = Key.T, IsGlobal = true },
+            new HotkeyDefinition { Id = "Settings", Name = "打开设置", Modifiers = ModifierKeys.Control, Key = Key.OemComma, IsGlobal = true },
         };
 
         foreach (var hk in hotkeys)
@@ -138,6 +154,15 @@ public partial class MainWindow : Window
                 case "ToggleSysAudio": ToggleSystemAudio.IsChecked = !ToggleSystemAudio.IsChecked; break;
                 case "StopSave": _recorder.Stop(); break;
                 case "Discard": _recorder.Discard(); break;
+                case "Marker": AddMarker(); break;
+                case "OpenFolder": OpenOutputFolder(); break;
+                case "CopyPath": CopyLastPath(); break;
+                case "ScreenshotWindow": TakeScreenshotWindow(); break;
+                case "ScreenshotActive": TakeScreenshotActiveWindow(); break;
+                case "ScreenshotClipboard": CopyScreenshotToClipboard(); break;
+                case "OpenLastFile": OpenLastRecording(); break;
+                case "Theme": ThemeButton_Click(this, new RoutedEventArgs()); break;
+                case "Settings": SettingsButton_Click(this, new RoutedEventArgs()); break;
             }
         });
     }
@@ -221,8 +246,11 @@ public partial class MainWindow : Window
         });
     }
 
-    private void ShowRecordingToast()
+    private void ShowRecordingToast() => ShowToast("BetterSR 正在录制中...");
+
+    private void ShowToast(string message)
     {
+        ToastText.Text = message;
         RecordingToast.Visibility = Visibility.Visible;
         ToastTransform.Y = -80;
 
@@ -242,6 +270,114 @@ public partial class MainWindow : Window
         sb.Children.Add(anim);
         sb.Completed += (s, e) => RecordingToast.Visibility = Visibility.Collapsed;
         sb.Begin();
+    }
+
+    private void AddMarker()
+    {
+        if (_recorder.State != RecordingState.Recording)
+        {
+            ShowToast("未录制，无法添加标记");
+            return;
+        }
+        var n = _recorder.AddMarker();
+        if (n > 0) ShowToast($"标记 #{n} 已添加");
+    }
+
+    private void OpenOutputFolder()
+    {
+        var dir = _config.Settings.OutputDirectory;
+        Directory.CreateDirectory(dir);
+        try
+        {
+            Process.Start(new ProcessStartInfo { FileName = dir, UseShellExecute = true });
+            FooterText.Text = "已打开输出文件夹";
+        }
+        catch
+        {
+            ShowToast("无法打开文件夹");
+        }
+    }
+
+    private void CopyLastPath()
+    {
+        var path = _recorder.CurrentOutputPath;
+        if (!string.IsNullOrEmpty(path) && File.Exists(path))
+        {
+            System.Windows.Clipboard.SetText(path);
+            ShowToast("已复制上次录制路径");
+        }
+        else
+        {
+            ShowToast("还没有已保存的录制");
+        }
+    }
+
+    private void OpenLastRecording()
+    {
+        var path = _recorder.CurrentOutputPath;
+        if (!string.IsNullOrEmpty(path) && File.Exists(path))
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo { FileName = path, UseShellExecute = true });
+            }
+            catch
+            {
+                ShowToast("无法打开文件");
+            }
+        }
+        else
+        {
+            ShowToast("还没有已保存的录制");
+        }
+    }
+
+    private void TakeScreenshotWindow()
+    {
+        var picker = new WindowPickerWindow { Owner = this };
+        if (picker.ShowDialog() == true && picker.SelectedHwnd != IntPtr.Zero)
+        {
+            if (_recorder.TakeScreenshotWindow(picker.SelectedHwnd))
+            {
+                FooterText.Text = "已保存窗口截图";
+            }
+        }
+    }
+
+    private void TakeScreenshotActiveWindow()
+    {
+        var hwnd = GetForegroundWindow();
+        if (hwnd != IntPtr.Zero && _recorder.TakeScreenshotWindow(hwnd))
+        {
+            FooterText.Text = "已保存活动窗口截图";
+        }
+    }
+
+    private void CopyScreenshotToClipboard()
+    {
+        var bmp = _recorder.CaptureScreenBitmap();
+        if (bmp == null)
+        {
+            ShowToast("截图失败");
+            return;
+        }
+        try
+        {
+            using var ms = new MemoryStream();
+            bmp.Save(ms, ImageFormat.Png);
+            ms.Position = 0;
+            var src = BitmapFrame.Create(ms, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+            System.Windows.Clipboard.SetImage(src);
+            ShowToast("截图已复制到剪贴板");
+        }
+        catch
+        {
+            ShowToast("截图复制失败");
+        }
+        finally
+        {
+            bmp.Dispose();
+        }
     }
 
     private TimeSpan CurrentDuration { get; set; }

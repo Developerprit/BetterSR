@@ -232,7 +232,7 @@
             </Border.RenderTransform>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Ellipse Width="10" Height="10" Fill="{DynamicResource RecordingRed}" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                <TextBlock Text="BetterSR 正在录制中..." FontSize="14" FontWeight="SemiBold"
+                <TextBlock x:Name="ToastText" Text="BetterSR 正在录制中..." FontSize="14" FontWeight="SemiBold"
                            Foreground="{DynamicResource ButtonFg}" VerticalAlignment="Center"/>
             </StackPanel>
         </Border>
