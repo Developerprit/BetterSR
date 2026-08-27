@@ -7,6 +7,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace BetterSR;
@@ -23,6 +25,7 @@ public partial class MainWindow : Window
     private readonly RecorderService _recorder;
     private System.Windows.Forms.NotifyIcon? _trayIcon;
     private DispatcherTimer? _durationTimer;
+    private RecordingState _lastRecorderState = RecordingState.Idle;
 
     public MainWindow()
     {
@@ -209,7 +212,36 @@ public partial class MainWindow : Window
                     ? $"已保存: {Path.GetFileName(_recorder.CurrentOutputPath)}"
                     : "就绪";
             }
+
+            if (state == RecordingState.Recording && _lastRecorderState == RecordingState.Idle)
+            {
+                ShowRecordingToast();
+            }
+            _lastRecorderState = state;
         });
+    }
+
+    private void ShowRecordingToast()
+    {
+        RecordingToast.Visibility = Visibility.Visible;
+        ToastTransform.Y = -80;
+
+        var anim = new DoubleAnimationUsingKeyFrames
+        {
+            Duration = TimeSpan.FromSeconds(1.8)
+        };
+        // 从上滑入(0.3s) -> 停顿 1.2s -> 向上回缩消失(0.3s)
+        anim.KeyFrames.Add(new LinearDoubleKeyFrame(-80, KeyTime.FromTimeSpan(TimeSpan.Zero)));
+        anim.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.3)), new CubicEase { EasingMode = EasingMode.EaseOut }));
+        anim.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1.5))));
+        anim.KeyFrames.Add(new EasingDoubleKeyFrame(-80, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1.8)), new CubicEase { EasingMode = EasingMode.EaseIn }));
+
+        var sb = new Storyboard();
+        Storyboard.SetTarget(anim, ToastTransform);
+        Storyboard.SetTargetProperty(anim, new PropertyPath(TranslateTransform.YProperty));
+        sb.Children.Add(anim);
+        sb.Completed += (s, e) => RecordingToast.Visibility = Visibility.Collapsed;
+        sb.Begin();
     }
 
     private TimeSpan CurrentDuration { get; set; }
