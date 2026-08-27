@@ -22,6 +22,13 @@
                     <Button Content="浏览" Click="BrowseButton_Click" Margin="8,0,0,0" Width="60" Height="26" Background="{DynamicResource AccentLight}" Foreground="{DynamicResource WindowFg}" BorderThickness="0"/>
                 </StackPanel>
 
+                <TextBlock Text="FFmpeg 路径（可选，留空则自动下载）" FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,4">
+                    <TextBox x:Name="FfmpegPathBox" Width="320" Height="26" VerticalContentAlignment="Center" Background="{DynamicResource CardBg}" Foreground="{DynamicResource WindowFg}" BorderBrush="{DynamicResource CardBorder}" TextChanged="FfmpegPathBox_TextChanged"/>
+                    <Button Content="浏览" Click="BrowseFfmpegButton_Click" Margin="8,0,0,0" Width="60" Height="26" Background="{DynamicResource AccentLight}" Foreground="{DynamicResource WindowFg}" BorderThickness="0"/>
+                </StackPanel>
+                <TextBlock x:Name="FfmpegStatusText" FontSize="12" Margin="0,0,0,14" Foreground="{DynamicResource WindowFg}"/>
+
                 <TextBlock Text="帧率 (fps)" FontWeight="SemiBold"/>
                 <ComboBox x:Name="FpsCombo" Width="120" HorizontalAlignment="Left" Margin="0,6,0,14" Background="{DynamicResource CardBg}" Foreground="{DynamicResource WindowFg}" BorderBrush="{DynamicResource CardBorder}">
                     <ComboBoxItem Content="30"/>

@@ -51,7 +51,7 @@
 
 - Windows 10 版本 1809 或更高 / Windows 10 1809+
 - 64 位系统 / 64-bit
-- 首次启动需联网下载 FFmpeg（约 100MB）/ Internet required for first-run FFmpeg download (~100MB)
+- FFmpeg 自动下载（jsDelivr 国内加速源，约 33MB），或手动指定 / 放 exe 同级 / 系统 PATH 即可 / FFmpeg auto-download (jsDelivr mirror, ~33MB), or just point to an existing ffmpeg.exe
 
 ---
 
@@ -59,8 +59,8 @@
 
 1. 下载 `BetterSR.exe` 到任意位置。  
    Download `BetterSR.exe` to any folder.
-2. 双击运行，首次启动会自动准备 FFmpeg。  
-   Double-click to run; FFmpeg will be prepared automatically on first launch.
+2. 双击运行，若自动下载较慢可在「设置 → FFmpeg 路径」手动指定 ffmpeg.exe，或放到 exe 同级目录。  
+   Double-click to run. If auto-download is slow/fails, set the FFmpeg path in Settings, or place ffmpeg.exe next to the exe.
 3. 使用快捷键或界面按钮开始录制。  
    Use hotkeys or the on-screen buttons to start recording.
 4. 录制文件默认保存到 `桌面\BetterSR`。  

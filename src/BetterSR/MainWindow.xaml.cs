@@ -30,6 +30,7 @@ public partial class MainWindow : Window
     private System.Windows.Forms.NotifyIcon? _trayIcon;
     private DispatcherTimer? _durationTimer;
     private RecordingState _lastRecorderState = RecordingState.Idle;
+    private bool _ffmpegDownloading = false;
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
@@ -92,16 +93,22 @@ public partial class MainWindow : Window
             SayingText.Text = "“每一次录制，都是一次创作。”";
         }
 
-        if (!_ffmpeg.IsAvailable)
+        if (_ffmpeg.IsAvailable)
         {
-            FooterText.Text = "正在准备 FFmpeg...";
-            var progress = new Progress<double>(p => FooterText.Text = $"正在下载 FFmpeg... {p:P0}");
-            var ok = await _ffmpeg.EnsureAvailableAsync(progress);
-            FooterText.Text = ok ? "FFmpeg 准备就绪" : "FFmpeg 准备失败，请检查网络";
+            FooterText.Text = "就绪";
         }
         else
         {
-            FooterText.Text = "就绪";
+            // 后台静默尝试下载（不阻塞主界面）；若网络较慢失败，用户仍可手动指定而无需等待
+            _ffmpegDownloading = true;
+            _ = Task.Run(async () =>
+            {
+                var progress = new Progress<double>(p => Dispatcher.Invoke(() =>
+                    FooterText.Text = $"正在准备 FFmpeg... {p:P0}"));
+                var ok = await _ffmpeg.EnsureAvailableAsync(progress);
+                _ffmpegDownloading = false;
+                Dispatcher.Invoke(() => FooterText.Text = ok ? "FFmpeg 已就绪" : "FFmpeg 未下载（设置中可手动指定）");
+            });
         }
     }
 
@@ -463,7 +470,31 @@ public partial class MainWindow : Window
     private bool EnsureFFmpeg()
     {
         if (_ffmpeg.IsAvailable) return true;
-        System.Windows.MessageBox.Show("FFmpeg 尚未准备就绪，请检查网络后重试。", "BetterSR", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+        if (_ffmpegDownloading)
+        {
+            System.Windows.MessageBox.Show("FFmpeg 正在后台下载，请稍候再试。", "BetterSR", MessageBoxButton.OK, MessageBoxImage.Information);
+            return false;
+        }
+
+        // 后台自动尝试下载，避免下次再卡
+        _ffmpegDownloading = true;
+        _ = Task.Run(async () =>
+        {
+            var progress = new Progress<double>(p => Dispatcher.Invoke(() =>
+                FooterText.Text = $"正在下载 FFmpeg... {p:P0}"));
+            var ok = await _ffmpeg.EnsureAvailableAsync(progress);
+            _ffmpegDownloading = false;
+            Dispatcher.Invoke(() => FooterText.Text = ok ? "FFmpeg 已就绪（可开始录制）" : "FFmpeg 未下载，请在设置中手动指定");
+        });
+
+        var result = System.Windows.MessageBox.Show(
+            "FFmpeg 尚未就绪。BetterSR 已在后台重新尝试下载，但你的网络可能较慢。\n\n立即可用的三种方式：\n  1. 把 ffmpeg.exe 放到 BetterSR.exe 同目录（推荐，零等待）；\n  2. 在“设置”中手动指定 ffmpeg.exe 路径；\n  3. 确保系统 PATH 中已存在 ffmpeg（如装过 OBS / 剪映 / PotPlayer）。\n\n是否现在打开设置指定路径？",
+            "FFmpeg 未就绪", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result == MessageBoxResult.Yes)
+        {
+            SettingsButton_Click(this, new RoutedEventArgs());
+        }
         return false;
     }
 
