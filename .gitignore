@@ -14,3 +14,8 @@ packages/
 
 # User-specific
 *.log
+
+# WorkBuddy project data & local push artifacts (never commit)
+.workbuddy/
+BetterSR.bundle
+*.bundle
