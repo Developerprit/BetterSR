@@ -1,6 +1,6 @@
 # BetterSR — 更好的录制屏幕 / A Better Screen Recorder
 
-![BetterSR](Assets/Background.png)
+![BetterSR](https://github.com/Developerprit/BetterSR/blob/master/src/BetterSR/Assets/Background.png))
 
 > 一款更轻、更好看、更听话的 Windows 屏幕录制工具。  
 > A lighter, prettier, and more obedient screen recorder for Windows.
